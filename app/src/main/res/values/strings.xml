@@ -1,0 +1,18 @@
+<resources>
+    <!--QQMenu-->
+    <string name="app_name">JustGo</string>
+    <string name="text_1">QQ钱包</string>
+    <string name="text_2">个性装扮</string>
+    <string name="text_3">我的收藏</string>
+    <string name="text_4">我的相册</string>
+    <string name="text_5">我的文件</string>
+    <string name="text_6">我的日程</string>
+    <string name="text_7">我的名片夹</string>
+    <!--IOS退出-->
+    <string name="text_exit_number">退出当前账号</string>
+    <string name="text_cancel">取消</string>
+    <string name="text_exit">确定退出</string>
+    <string name="text_title">亲，真的要退出了吗？</string>
+
+
+</resources>
