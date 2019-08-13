@@ -17,10 +17,7 @@ public class MyDialog extends Dialog {
     public MyDialog(Context context){
         super (context, R.style.mdilog);     //设置对话框样式
         //通过LayoutInflater获取布局
-        LayoutInflater inflater = LayoutInflater.from ( context );
-        View view= inflater.inflate ( R.layout.mdialog_layout,null );
-
-       // View view =  LayoutInflater.from ( context ).inflate ( R.layout.mdialog_layout ,null);
+        View view =  LayoutInflater.from ( context ).inflate ( R.layout.mdialog_layout ,null);
         TVTitle = view.findViewById ( R.id.tv_exit_title );       //获取显示标题的文本框控件
         Button_canael = view.findViewById ( R.id.btn_cancel );        //获取取消按钮
         Button_exit = view.findViewById ( R.id.btn_exit );           //获取确定取消按钮
