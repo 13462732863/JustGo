@@ -1,14 +1,17 @@
 package com.example.justgo;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.annotation.SuppressLint;
-import android.media.Image;
+import android.content.Context;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.multidex.MultiDex;
 
 import com.example.justgo.customClass.MyAnimation;
 import com.example.justgo.customClass.MyDialog;
@@ -107,5 +110,31 @@ public class RainBowActivity extends AppCompatActivity {
         } );
         myDialog.show ();            //显示对话框
     }
+    /**
+     *再按一次退出程序的实现
+     * */
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if(keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_DOWN){
+            if((System.currentTimeMillis()-exitTime) > 2000){
+                Toast.makeText(getApplicationContext(), "再按一次退出程序", Toast.LENGTH_SHORT).show();
+                exitTime = System.currentTimeMillis();
+            } else {
+                finish();
+                System.exit(0);
+            }
 
+            return true;
+
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    private long exitTime = 0;
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        MultiDex.install(base);
+    }
 }
