@@ -1,114 +1,163 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#fff"
     android:orientation="vertical">
     <!--标题图片-->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:background="@drawable/left_title"
-        >
+        android:background="@drawable/qq_bg">
 
     </LinearLayout>
     <!--菜单部分-->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="2"
-        android:background="@drawable/left_bg"
-        >
+        android:layout_weight="2">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="350dp"
             android:orientation="vertical">
+
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:background="@drawable/btn_bg"
-                android:drawableLeft="@drawable/img1"
+                android:drawableLeft="@mipmap/menoy_icon"
                 android:drawablePadding="10dp"
+                android:gravity="center_vertical"
                 android:paddingLeft="20dp"
                 android:text="@string/text_1"
-                android:gravity="center_vertical"
-                android:textSize="20sp"
-                />
+                android:textSize="18sp" />
+
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:background="@drawable/btn_bg"
-                android:drawableLeft="@drawable/img2"
+                android:drawableLeft="@mipmap/ganga_icon"
                 android:drawablePadding="10dp"
                 android:gravity="center_vertical"
                 android:paddingLeft="20dp"
                 android:text="@string/text_2"
-                android:textSize="20sp"
-                />
+                android:textSize="18sp" />
+
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:background="@drawable/btn_bg"
-                android:drawableLeft="@drawable/img3"
+                android:drawableLeft="@mipmap/heihei_icon"
                 android:drawablePadding="10dp"
                 android:gravity="center_vertical"
                 android:paddingLeft="20dp"
                 android:text="@string/text_3"
-                android:textSize="20sp"
-                />
+                android:textSize="18sp" />
+
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:background="@drawable/btn_bg"
-                android:drawableLeft="@drawable/img4"
+                android:drawableLeft="@mipmap/weimi_icon"
                 android:drawablePadding="10dp"
                 android:gravity="center_vertical"
                 android:paddingLeft="20dp"
                 android:text="@string/text_4"
-                android:textSize="20sp"
-                />
+                android:textSize="18sp" />
+
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:background="@drawable/btn_bg"
-                android:drawableLeft="@drawable/img5"
+                android:drawableLeft="@mipmap/unhappy_icon"
                 android:drawablePadding="10dp"
                 android:gravity="center_vertical"
                 android:paddingLeft="20dp"
                 android:text="@string/text_5"
-                android:textSize="20sp"
-                />
+                android:textSize="18sp" />
+
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
+
                 android:background="@drawable/btn_bg"
-                android:drawableLeft="@drawable/img6"
+                android:drawableLeft="@mipmap/unhappy_icon"
                 android:drawablePadding="10dp"
+                android:drawableRight="@mipmap/right_return"
                 android:gravity="center_vertical"
                 android:paddingLeft="20dp"
                 android:text="@string/text_6"
-                android:textSize="20sp"
-                />
+                android:textSize="18sp" />
+
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:background="@drawable/btn_bg"
-                android:drawableLeft="@drawable/img7"
+                android:drawableLeft="@mipmap/question_icon"
                 android:drawablePadding="10dp"
                 android:gravity="center_vertical"
                 android:paddingLeft="20dp"
+                android:onClick="OnExitNumber"
                 android:text="@string/text_7"
-                android:textSize="20sp"
-                android:onClick="onExitNumber"
-                />
+                android:textSize="18sp" />
 
         </LinearLayout>
+
+    </LinearLayout>
+    <!--底部按钮菜单部分-->
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="100dp"
+        android:orientation="horizontal"
+        android:background="@null"
+        android:gravity="bottom"
+        >
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:background="@drawable/btn_bg"
+            android:drawableLeft="@mipmap/settings_icon"
+            android:drawablePadding="10dp"
+            android:gravity="center_vertical"
+            android:paddingLeft="20dp"
+            android:text="@string/text_8"
+            android:textSize="18sp"
+            tools:ignore="Suspicious0dp" />
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:background="@drawable/btn_bg"
+            android:drawableLeft="@mipmap/night_icon"
+            android:drawablePadding="10dp"
+            android:gravity="center_vertical"
+            android:paddingLeft="20dp"
+            android:text="@string/text_9"
+            android:textSize="18sp"
+            tools:ignore="Suspicious0dp" />
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:background="@drawable/btn_bg"
+            android:drawableLeft="@mipmap/night_icon"
+            android:drawablePadding="10dp"
+            android:gravity="center_vertical"
+            android:paddingLeft="20dp"
+            android:text="@string/text_10"
+            android:textSize="18sp"
+            tools:ignore="Suspicious0dp" />
+
     </LinearLayout>
 </LinearLayout>
