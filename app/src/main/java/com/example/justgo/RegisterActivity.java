@@ -1,156 +1,173 @@
 package com.example.justgo;
 
-import android.app.ProgressDialog;
+import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Looper;
+import android.os.Handler;
+import android.os.Message;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.justgo.customClass.MD5Utils;
 
+
+import org.json.JSONObject;
+import cn.smssdk.SMSSDK;
+import cn.smssdk.EventHandler;
+
+
+//短信验证登录
 public class RegisterActivity extends AppCompatActivity implements View.OnClickListener {
-    private EditText editTextP, editSMS, editTExtCT,editpswAgain;//手机号，验证码，密码,确认密码
-    private Button button, SMSBtn;//注册按钮,获取验证码按钮
-    private TextView enterText;//登录按钮
-    private ImageView returnImage;//返回<
+    private static final String TAG = "SmsFangYuan";          //打印Log标记
+    EditText mEditTextPhoneNumber;                      //获取手机号码
+    EditText mEditTextCode;                             //输入验证码
+    Button mButtonGetCode;                             //获取验证码
+    Button mButtonLogin;                                //登录按钮
+    TextView mTVBackAccount;                           //返回账号登录按钮
+    EventHandler eventHandler;
+    String strPhoneNumber;
 
     @Override
-    protected void onCreate (@Nullable Bundle savedInstanceState) {
-        super.onCreate ( savedInstanceState );
-        setContentView ( R.layout.login_register );
-        init ();
-    }
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.login_register);
 
-    private void init () {
-        editTextP = findViewById ( R.id.et_phone_num );
-        editSMS = findViewById ( R.id.et_sms_code );
-        editTExtCT = findViewById ( R.id.et_password );
-        button = findViewById ( R.id.bn_immediateRegistration );
-        button.setOnClickListener ( this );
-        enterText = findViewById ( R.id.tv_enter );
-        returnImage = findViewById ( R.id.iv_return );
-        returnImage.setOnClickListener ( this );
-        SMSBtn = findViewById ( R.id.bn_sms_code );
-        SMSBtn.setOnClickListener ( this );
-        editpswAgain = findViewById ( R.id.et_password_again );
-        editpswAgain.setOnClickListener ( this );
+        mEditTextPhoneNumber =  findViewById(R.id.et_phone_num);
+        mEditTextCode =  findViewById(R.id.et_sms_code);
+        mButtonGetCode =  findViewById(R.id.bn_sms_code);
+        mButtonLogin =  findViewById(R.id.bn_immediateRegistration);
+        mTVBackAccount = findViewById ( R.id.tv_enter );
+
+        mButtonGetCode.setOnClickListener(this);
+        mButtonLogin.setOnClickListener(this);
+        mTVBackAccount.setOnClickListener ( this );
+        //初始化并验证SDK  APPkey   App secket
+        SMSSDK.initSDK(this, "2c18377c6ad94", "eb579ff6cf606092ceeafdf72455cd81");
+        eventHandler = new EventHandler() {
+
+            /**
+             * 在操作之后被触发
+             *
+             * @param event  参数1
+             * @param result 参数2 SMSSDK.RESULT_COMPLETE表示操作成功，为SMSSDK.RESULT_ERROR表示操作失败
+             * @param data   事件操作的结果
+             */
+
+            @Override
+            public void afterEvent(int event, int result, Object data) {
+                Message message = myHandler.obtainMessage(0x00);
+                message.arg1 = event;
+                message.arg2 = result;
+                message.obj = data;
+                myHandler.sendMessage(message);
+            }
+        };
+
+        SMSSDK.registerEventHandler(eventHandler);
     }
 
     @Override
-    public void onClick (View view) {
-        switch (view.getId ()) {
-            case R.id.bn_immediateRegistration:
-                register ( view );
-                break;
-            case R.id.tv_enter:
-                returnEnter ();
-                break;
-            case R.id.iv_return:
-                returnEnter ();
-                break;
-            case R.id.bn_sms_code:
-                final String usrename = editTextP.getText ().toString ().trim ();
-                if (TextUtils.isEmpty ( usrename )) {
-                    Toast.makeText ( this, "手机号不能为空", Toast.LENGTH_SHORT ).show ();
-                    editTextP.requestFocus ();
-                } else {
-                    Toast.makeText ( this, "验证码获取成功", Toast.LENGTH_SHORT ).show ();
+    protected void onDestroy() {
+        super.onDestroy();
+        SMSSDK.unregisterEventHandler(eventHandler);
+    }
+
+    @Override
+    public void onClick(View view) {
+        if (view.getId() == R.id.bn_immediateRegistration) {
+            String strCode = mEditTextCode.getText().toString();
+            if (null != strCode && strCode.length() == 4) {
+                Log.d(TAG, mEditTextCode.getText().toString());
+                SMSSDK.submitVerificationCode("86", strPhoneNumber, mEditTextCode.getText().toString());
+            } else {
+                Toast.makeText(this, "密码长度不正确", Toast.LENGTH_SHORT).show();
+            }
+        } else if (view.getId() == R.id.bn_sms_code) {
+            strPhoneNumber = mEditTextPhoneNumber.getText().toString();
+            if (null == strPhoneNumber || "".equals(strPhoneNumber) || strPhoneNumber.length() != 11) {
+                Toast.makeText(this, "电话号码输入有误", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            SMSSDK.getVerificationCode("86", strPhoneNumber);
+            mButtonGetCode.setClickable(false);
+            //开启线程去更新button的text
+            new Thread() {
+                @Override
+                public void run() {
+                    int totalTime = 60;
+                    for (int i = 0; i < totalTime; i++) {
+                        Message message = myHandler.obtainMessage(0x01);
+                        message.arg1 = totalTime - i;
+                        myHandler.sendMessage(message);
+                        try {
+                            sleep(1000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    myHandler.sendEmptyMessage(0x02);
                 }
-                break;
-        }
-    }
-
-    private void returnEnter () {
-        Intent intent = new Intent ( this, EnterActivity.class );
-        startActivity ( intent );
-        finish ();
-    }
-
-    public void register (View view) {
-        final String userName = editTextP.getText ().toString ().trim ();
-        final String passwordSMS = editSMS.getText ().toString ().trim ();//验证码
-        final String passwordFirst = editTExtCT.getText ().toString ().trim ();//首次密码
-        final String passwordAgain = editpswAgain.getText ().toString ().trim ();//再次密码
-
-        //判断输入框内容
-
-        if (TextUtils.isEmpty ( userName )) {
-            Toast.makeText ( RegisterActivity.this, "请输入用户名", Toast.LENGTH_SHORT ).show ();
-        } else if (TextUtils.isEmpty ( passwordFirst )) {
-            Toast.makeText ( RegisterActivity.this, "请输入密码", Toast.LENGTH_SHORT ).show ();
-        } else if (TextUtils.isEmpty ( passwordSMS )) {
-            Toast.makeText ( RegisterActivity.this, "请输入验证码", Toast.LENGTH_SHORT ).show ();
-        }
-        else if (TextUtils.isEmpty ( passwordAgain )) {
-            Toast.makeText ( RegisterActivity.this, "请再次输入密码", Toast.LENGTH_SHORT ).show ();
-        } else if (!passwordFirst.equals ( passwordAgain )) {
-            Toast.makeText ( RegisterActivity.this, "输入两次的密码不一样", Toast.LENGTH_SHORT ).show ();
-
-            /**
-             *从SharedPreferences中读取输入的用户名，判断SharedPreferences中是否有此用户名
-             */
-        } else if (isExistUserName ( userName )) {
-            Toast.makeText ( RegisterActivity.this, "此账户名已经存在", Toast.LENGTH_SHORT ).show ();
-
-        } else {
-            Toast.makeText ( RegisterActivity.this, "注册成功", Toast.LENGTH_SHORT ).show ();
-            //把账号、密码和账号标识保存到sp里面
-            /**
-             * 保存账号和密码到SharedPreferences中
-             */
-            saveRegisterInfo ( userName, passwordFirst );
-            //注册成功后把账号传递到LoginActivity.java中
-            // 返回值到loginActivity显示
-            Intent data = new Intent ();
-            data.putExtra ( "userName", userName );
-            setResult ( RESULT_OK, data );
-            //RESULT_OK为Activity系统常量，状态码为-1，
-            // 表示此页面下的内容操作成功将data返回到上一页面，如果是用back返回过去的则不存在用setResult传递data值
-           // RegisterActivity.this.finish ();
+            }.start();
+        }else if(view.getId () == R.id.tv_enter){
             startActivity ( new Intent ( RegisterActivity.this,EnterActivity.class ) );
         }
     }
-    /**
-     * 从SharedPreferences中读取输入的用户名，判断SharedPreferences中是否有此用户名
-     */
-    private boolean isExistUserName (String userName) {
-        boolean has_userName = false;
-        //mode_private SharedPreferences sp = getSharedPreferences( );
-        // "loginInfo", MODE_PRIVATE
-        SharedPreferences sp = getSharedPreferences ( "loginInfo", MODE_PRIVATE );
-        //获取密码
-        String spPsw = sp.getString ( userName, "" );//传入用户名获取密码
-        //如果密码不为空则确实保存过这个用户名
-        if (!TextUtils.isEmpty ( spPsw )) {
-            has_userName = true;
+
+    @SuppressLint("HandlerLeak")
+    Handler myHandler = new Handler() {
+        @SuppressLint("SetTextI18n")
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case 0x00:
+                    int event = msg.arg1;
+                    int result = msg.arg2;
+                    Object data = msg.obj;
+                    Log.e(TAG, "result : " + result + ", event: " + event + ", data : " + data);
+                    if (result == SMSSDK.RESULT_COMPLETE) { //回调  当返回的结果是complete
+                        if (event == SMSSDK.EVENT_GET_VERIFICATION_CODE) { //获取验证码
+                            Toast.makeText(RegisterActivity.this, "发送验证码成功", Toast.LENGTH_SHORT).show();
+                            Log.d(TAG, "get verification code successful.");
+                        } else if (event == SMSSDK.EVENT_SUBMIT_VERIFICATION_CODE) { //提交验证码
+                            Log.d(TAG, "submit code successful");
+                            Toast.makeText(RegisterActivity.this, "提交验证码成功", Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(RegisterActivity.this, RainBowActivity.class);
+                            startActivity(intent);
+                        } else {
+                            Log.d(TAG, data.toString());
+                        }
+                    } else { //进行操作出错，通过下面的信息区分析错误原因
+                        try {
+                            Throwable throwable = (Throwable) data;
+                            throwable.printStackTrace();
+                            JSONObject object = new JSONObject(throwable.getMessage());
+                            String des = object.optString("detail");//错误描述
+                            int status = object.optInt("status");//错误代码
+                            //错误代码：  http://wiki.mob.com/android-api-%E9%94%99%E8%AF%AF%E7%A0%81%E5%8F%82%E8%80%83/
+                            Log.e(TAG, "status: " + status + ", detail: " + des);
+                            if (status > 0 && !TextUtils.isEmpty(des)) {
+                                Toast.makeText(RegisterActivity.this, des, Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    break;
+                case 0x01:
+                    mButtonGetCode.setText("重新发送(" + msg.arg1 + ")");
+                    break;
+                case 0x02:
+                    mButtonGetCode.setText("获取验证码");
+                    mButtonGetCode.setClickable(true);
+                    break;
+            }
         }
-        return has_userName;
-    }
-
-    /**
-     * 保存账号和密码到SharedPreferences中SharedPreferences
-     */
-    private void saveRegisterInfo (String userName, String psw) {
-        String md5Psw = MD5Utils.MD5 ( psw );//把密码用MD5加密
-        //loginInfo表示文件名, mode_private SharedPreferences sp = getSharedPreferences( );
-        SharedPreferences sp = getSharedPreferences ( "loginInfo", MODE_PRIVATE );
-
-        //获取编辑器， SharedPreferences.Editor  editor -> sp.edit();
-        SharedPreferences.Editor editor = sp.edit ();
-        //以用户名为key，密码为value保存在SharedPreferences中
-        //key,value,如键值对，editor.putString(用户名，密码）;
-        editor.putString ( userName, md5Psw );
-        //提交修改 editor.commit();
-        editor.apply ();
-    }
+    };
 }

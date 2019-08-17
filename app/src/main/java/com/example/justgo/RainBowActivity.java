@@ -228,9 +228,6 @@ public class RainBowActivity extends AppCompatActivity implements View.OnClickLi
                         index=i;
                         isPause=false;
                         mediaPlayer.prepareAsync();
-
-
-
                     }
                 }
             });

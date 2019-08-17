@@ -1,4 +1,19 @@
 apply plugin: 'com.android.application'
+// 添加插件
+//apply plugin :'com.mob.sdk'
+//
+//// 在MobSDK的扩展中注册SMSSDK的相关信息
+//MobSDK {
+//    appKey "d580ad56b4b5"
+//    appSecret "7fcae59a62342e7e2759e9e397c82bdd"
+//
+//    SMSSDK {
+//        //默认使用GUI，若不使用GUI，通过以下开关关闭
+//        gui false
+//        //若使用GUI的自动填充验证码功能，需打开此设置
+//        autoSMS true
+//    }
+//}
 
 android {
     compileSdkVersion 29
@@ -27,6 +42,8 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.2.0'
     implementation 'com.android.support:multidex:1.0.3'
+    implementation name:'SMSSDK-2.1.2',ext:'aar'
+    implementation name:'SMSSDKGUI-2.1.2',ext:'aar'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 }
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
@@ -54,9 +71,8 @@ allprojects {
 
     }
 }
-
-
-//task clean(type: Delete) {
-//    delete rootProject.buildDir
-//}
-
+repositories {
+    flatDir{
+        dirs 'libs'
+    }
+}
